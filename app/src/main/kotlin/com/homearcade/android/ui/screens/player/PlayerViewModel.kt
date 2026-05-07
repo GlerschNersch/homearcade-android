@@ -3,7 +3,6 @@ package com.homearcade.android.ui.screens.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.homearcade.android.data.api.HomeArcadeApi
-import com.homearcade.android.data.api.model.Rom
 import com.homearcade.android.emulation.EmulationManager
 import com.swordfish.libretrodroid.GLRetroViewData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 sealed class PlayerState {
@@ -35,7 +33,9 @@ class PlayerViewModel @Inject constructor(
             _state.value = PlayerState.Downloading
             try {
                 val rom = api.getRom(romId)
-                val cached = emulationManager.cachedRomPath(rom.id, rom.filename)
+                // Use originalName for cache key (falls back to slug if empty)
+                val cacheFileName = rom.originalName.ifEmpty { "${rom.slug}.rom" }
+                val cached = emulationManager.cachedRomPath(rom.id, cacheFileName)
 
                 if (!cached.exists()) {
                     val response = api.downloadRom(rom.id)
@@ -48,9 +48,10 @@ class PlayerViewModel @Inject constructor(
                     }
                 }
 
-                val viewData = emulationManager.buildViewData(rom.systemId, cached)
+                // rom.system is the systemId (e.g. "ps1", "snes")
+                val viewData = emulationManager.buildViewData(rom.system, cached)
                     ?: run {
-                        _state.value = PlayerState.Error("No emulation core for '${rom.systemId}'")
+                        _state.value = PlayerState.Error("No emulation core for '${rom.system}'")
                         return@launch
                     }
 

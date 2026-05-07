@@ -66,9 +66,9 @@ private fun RomCard(rom: Rom, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column {
-            if (rom.coverUrl != null) {
+            if (rom.artUrl != null) {
                 AsyncImage(
-                    model = rom.coverUrl,
+                    model = rom.artUrl,
                     contentDescription = rom.title,
                     modifier = Modifier
                         .fillMaxWidth()
