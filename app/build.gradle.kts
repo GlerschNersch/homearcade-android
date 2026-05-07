@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
@@ -39,6 +38,11 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    // Kotlin 1.9.x uses composeOptions instead of the kotlin.compose plugin
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
 }
 
