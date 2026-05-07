@@ -1,0 +1,5 @@
+-keep class com.homearcade.android.data.api.model.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn okhttp3.**
+-dontwarn retrofit2.**
